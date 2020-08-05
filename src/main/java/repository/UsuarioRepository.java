@@ -44,11 +44,11 @@ public class UsuarioRepository extends AbstractCrudRepository {
 		}
 	}
 
-	public void remover(Usuario usuario) throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void remover(int id) throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		try (Connection c = this.abrirConexao()) {
 
 			PreparedStatement ps = c.prepareStatement("delete from usuario where id = ?");
-			ps.setInt(1, usuario.getId());
+			ps.setInt(1, id);
 			ps.execute();
 			ps.close();
 
@@ -84,15 +84,15 @@ public class UsuarioRepository extends AbstractCrudRepository {
 	public List<Usuario> listarTodos() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
 		try (Connection c = this.abrirConexao()) {
 
-			List<Usuario> users = null;
+			List<Usuario> users = new ArrayList<>();
 
 			PreparedStatement ps = c.prepareStatement("select * from usuario");
 			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				users = new ArrayList<Usuario>();
+			while (rs.next()) {
 				Usuario user = new Usuario();
 				user.setId(rs.getInt("id"));
 				user.setNome(rs.getString("nome"));
+
 				users.add(user);
 			}
 			rs.close();
@@ -101,7 +101,7 @@ public class UsuarioRepository extends AbstractCrudRepository {
 			return users;
 
 		} catch (SQLException e) {
-			throw new ErroAoConsultarBaseException("Ocorreu um erro ao consultar todos os usuários", e);
+			throw new ErroAoConsultarBaseException("Ocorreu um erro ao listar todos os usuários", e);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 
@@ -15,68 +16,78 @@ import runner.AndorinhaTestRunner;
 
 @RunWith(AndorinhaTestRunner.class)
 public class TestUsuarioRepository {
-	
+
+	private static final int ID_USUARIO_CONSULTA = 1;
+	private static final int ID_USUARIO_SEM_TWEET = 5;
+
 	private UsuarioRepository usuarioRepository;
-	
+
 	@Before
 	public void setUp() {
 		this.usuarioRepository = new UsuarioRepository();
 	}
-	
+
 	@Test
 	public void testa_se_usuario_foi_inserido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Usuario user = new Usuario();
 		user.setNome("Usuario do Teste de Unidade");
 		this.usuarioRepository.inserir(user);
-		
+
 		Usuario inserido = this.usuarioRepository.consultar(user.getId());
-		
+
 		assertThat(user.getId()).isGreaterThan(0);
-		
+
+		assertThat(inserido).isNotNull();
 		assertThat(inserido.getNome()).isEqualTo(user.getNome());
 		assertThat(inserido.getId()).isEqualTo(user.getId());
 	}
-	
+
 	@Test
 	public void testa_se_usuario_foi_alterado() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
-		Usuario user = new Usuario();
-		user.setId(3);
-		user.setNome("Usuario do Teste de Unidade Alterado");
+		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
+		user.setNome("Alterado!");
+
 		this.usuarioRepository.atualizar(user);
-		
-		Usuario inserido = this.usuarioRepository.consultar(user.getId());
-		
-		assertThat(user.getId()).isGreaterThan(0);
-		
-		assertThat(inserido.getNome()).isEqualTo(user.getNome());
-		assertThat(inserido.getId()).isEqualTo(user.getId());
+
+		Usuario alterado = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
+
+		assertThat(alterado).isEqualToComparingFieldByField(user);
 	}
-	
+
 	@Test
 	public void testa_se_usuario_foi_removido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
-		Usuario user = new Usuario();
-		user.setId(6);
-		user.setNome("Usuario do Teste de Unidade");
-		this.usuarioRepository.remover(user);
-		
-		assertThat(this.usuarioRepository.consultar(user.getId())).isNull();
+		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_SEM_TWEET);
+		assertThat(user).isNotNull();
+
+		this.usuarioRepository.remover(ID_USUARIO_SEM_TWEET);
+
+		Usuario removido = this.usuarioRepository.consultar(ID_USUARIO_SEM_TWEET);
+		assertThat(removido).isNull();
 	}
-	
+
+	@Test
+	public void testa_remover_usuario_com_tweet() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		assertThatThrownBy(() -> {
+			this.usuarioRepository.remover(ID_USUARIO_CONSULTA);
+		}).isInstanceOf(ErroAoConsultarBaseException.class)
+				.hasMessageContaining("Ocorreu um erro ao remover o usuário");
+	}
+
 	@Test
 	public void testa_consultar_usuario() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
-		int idConsulta = 4;
-		Usuario user = this.usuarioRepository.consultar(idConsulta);
-		
+		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
+
 		assertThat(user).isNotNull();
-		assertThat(user.getNome()).isEqualTo("Usuario do Teste de Unidade");
-		assertThat(user.getId()).isEqualTo(idConsulta);
+		assertThat(user.getNome()).isEqualTo("Alterado!");
+		assertThat(user.getId()).isEqualTo(ID_USUARIO_CONSULTA);
 	}
-	
+
 	@Test
 	public void testa_listar_todos_usuarios() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
-		List<Usuario> users =  this.usuarioRepository.listarTodos();
-		
-		assertThat(users).isNotNull();
+		List<Usuario> usuarios = this.usuarioRepository.listarTodos();
+
+		assertThat(usuarios).isNotNull().isNotEmpty().hasSize(5).extracting("nome")
+				.containsExactlyInAnyOrder("Usuário 2", "Usuário 3", "Usuário 4", "Usuario do Teste de Unidade", "Alterado!");
 	}
 
 }
