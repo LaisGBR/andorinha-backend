@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 
+import javax.ejb.EJB;
+
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +16,7 @@ import model.Usuario;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
 import runner.AndorinhaTestRunner;
+import runner.DatabaseHelper;
 
 @RunWith(AndorinhaTestRunner.class)
 public class TestUsuarioRepository {
@@ -20,11 +24,12 @@ public class TestUsuarioRepository {
 	private static final int ID_USUARIO_CONSULTA = 1;
 	private static final int ID_USUARIO_SEM_TWEET = 5;
 
+	@EJB
 	private UsuarioRepository usuarioRepository;
 
 	@Before
 	public void setUp() {
-		this.usuarioRepository = new UsuarioRepository();
+		DatabaseHelper.getInstance("andorinhaDS").execute("dataset/andorinha.xml", DatabaseOperation.CLEAN_INSERT);
 	}
 
 	@Test
@@ -78,7 +83,7 @@ public class TestUsuarioRepository {
 		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
 
 		assertThat(user).isNotNull();
-		assertThat(user.getNome()).isEqualTo("Alterado!");
+		assertThat(user.getNome()).isEqualTo("Usuário 1");
 		assertThat(user.getId()).isEqualTo(ID_USUARIO_CONSULTA);
 	}
 
@@ -87,7 +92,7 @@ public class TestUsuarioRepository {
 		List<Usuario> usuarios = this.usuarioRepository.listarTodos();
 
 		assertThat(usuarios).isNotNull().isNotEmpty().hasSize(5).extracting("nome")
-				.containsExactlyInAnyOrder("Usuário 2", "Usuário 3", "Usuário 4", "Usuario do Teste de Unidade", "Alterado!");
+				.containsExactlyInAnyOrder("Usuário 1","Usuário 2", "Usuário 3", "Usuário 4", "Usuário 5");
 	}
 
 }

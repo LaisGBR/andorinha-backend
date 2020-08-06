@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,7 @@ import model.Usuario;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
 import runner.AndorinhaTestRunner;
+import runner.DatabaseHelper;
 
 @RunWith(AndorinhaTestRunner.class)
 public class TestTweetRepository {
@@ -24,13 +28,15 @@ public class TestTweetRepository {
 
 	private static final long DELTA_MILIS = 500;
 
+	@EJB
 	private UsuarioRepository usuarioRepository;
+	
+	@EJB
 	private TweetRepository tweetRepository;
 
 	@Before
 	public void setUp() {
-		this.tweetRepository = new TweetRepository();
-		this.usuarioRepository = new UsuarioRepository();
+		DatabaseHelper.getInstance("andorinhaDS").execute("dataset/andorinha.xml", DatabaseOperation.CLEAN_INSERT);
 	}
 
 	@Test
