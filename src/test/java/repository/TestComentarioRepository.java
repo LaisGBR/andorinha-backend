@@ -3,6 +3,7 @@ package repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -17,6 +18,7 @@ import model.Tweet;
 import model.Usuario;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
+import model.seletor.ComentarioSeletor;
 import runner.AndorinhaTestRunner;
 import runner.DatabaseHelper;
 
@@ -43,7 +45,7 @@ public class TestComentarioRepository {
 		DatabaseHelper.getInstance("andorinhaDS").execute("dataset/andorinha.xml", DatabaseOperation.CLEAN_INSERT);
 	}
 	
-	@Test
+//	@Test
 	public void testa_se_comentario_foi_inserido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
@@ -65,7 +67,7 @@ public class TestComentarioRepository {
 			.isCloseTo(inserido.getData().getTime(), DELTA_MILIS);
 	}
 	
-	@Test
+//	@Test
 	public void testa_consultar_comentario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Comentario c =  this.comentarioRepository.consultar(ID_COMENTARIO_CONSULTA);
 		
@@ -77,7 +79,7 @@ public class TestComentarioRepository {
 		assertThat( c.getTweet().getUsuario() ).isNotNull();
 	}
 	
-	@Test
+//	@Test
 	public void testa_alterar_comentario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Comentario c =  this.comentarioRepository.consultar(ID_COMENTARIO_CONSULTA);
 		c.setConteudo("Alterado!");
@@ -91,7 +93,7 @@ public class TestComentarioRepository {
 			.isCloseTo(alterado.getData().getTime(), DELTA_MILIS);
 	}
 	
-	@Test
+//	@Test
 	public void testa_remover_comentario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Comentario c =  this.comentarioRepository.consultar(ID_COMENTARIO_CONSULTA);
 		assertThat( c ).isNotNull();
@@ -103,6 +105,29 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
+	public void testa_pesquisar_os_comentarios() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		ComentarioSeletor seletor = new ComentarioSeletor();
+		seletor.setIdTweet(1);
+		seletor.setIdUsuario(4);
+		seletor.setConteudo("Comentário");
+		
+		List<Comentario> comentarios = this.comentarioRepository.pesquisar(seletor);
+		
+		assertThat( comentarios ).isNotNull()
+							.isNotEmpty()
+							.hasSize(2)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Comentário 1", "Comentário 2");
+		
+		comentarios.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getUsuario()).isNotNull();
+			assertThat(t.getTweet()).isNotNull();
+			assertThat(t.getTweet().getUsuario()).isNotNull();
+		});
+	}
+	
+//	@Test
 	public void testa_listar_todos_os_comentarios() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		List<Comentario> comentarios = this.comentarioRepository.listarTodos();
 		
