@@ -200,64 +200,42 @@ public class ComentarioRepository extends AbstractCrudRepository {
 			throw new ErroAoConsultarBaseException("Ocorreu um erro ao pesquisar os comentários", e);
 		}
 	}
-
-	public List<Comentario> listarTodos() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+	
+	public Long contar(ComentarioSeletor seletor) throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
 		try (Connection c = this.abrirConexao()) {
 
-			List<Comentario> comentarios = new ArrayList<>();
+			Long id = 0L;
 
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT c.id, c.conteudo, c.data_postagem, c.id_usuario, u.nome as nome_usuario, ");
-			sql.append("c.id_tweet, t.conteudo as conteudo_tweet, t.id_usuario as id_usuario_tweet,  ");
-			sql.append("(SELECT u.nome as nome_usuario_tweet FROM tweet t ");
-			sql.append("JOIN usuario u on t.id_usuario = u.id ");
-			sql.append("WHERE t.id = c.id_tweet ) ");
+			sql.append("SELECT count(c.id) as total ");
 			sql.append("FROM comentario c ");
 			sql.append("JOIN usuario u on c.id_usuario = u.id ");
 			sql.append("JOIN tweet t on c.id_tweet = t.id ");
+			
+			this.criarFiltros(sql, seletor);
 
 			PreparedStatement ps = c.prepareStatement(sql.toString());
+			
+			this.adicionarParametros(ps, seletor);
 
+			System.out.println(ps.toString());
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Comentario comentario = new Comentario();
-				comentario.setId(rs.getInt("id"));
-				comentario.setConteudo(rs.getString("conteudo"));
-
-				Calendar data = new GregorianCalendar();
-				data.setTime(rs.getTimestamp("data_postagem"));
-				comentario.setData(data);
-
-				Usuario user = new Usuario();
-				user.setId(rs.getInt("id_usuario"));
-				user.setNome(rs.getString("nome_usuario"));
-				comentario.setUsuario(user);
-				
-				Tweet tweet = new Tweet();
-				tweet.setId(rs.getInt("id_tweet"));
-				tweet.setConteudo(rs.getString("conteudo_tweet"));
-				
-				Calendar dataTweet = new GregorianCalendar();
-				dataTweet.setTime( rs.getTimestamp("data_postagem") );
-				tweet.setData(dataTweet);
-				
-				Usuario userTweet = new Usuario();
-				userTweet.setId(rs.getInt("id_usuario_tweet"));
-				userTweet.setNome(rs.getString("nome_usuario_tweet"));
-				
-				tweet.setUsuario(userTweet);
-				comentario.setTweet(tweet);
-
-				comentarios.add(comentario);
+			
+			if (rs.next()) {
+				id = rs.getLong("total");
 			}
 			rs.close();
 			ps.close();
 
-			return comentarios;
+			return  id;
 
 		} catch (SQLException e) {
-			throw new ErroAoConsultarBaseException("Ocorreu um erro ao consultar todos os comentários", e);
+			throw new ErroAoConsultarBaseException("Ocorreu um erro ao contar os comentários", e);
 		}
+	}
+
+	public List<Comentario> listarTodos() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+		return this.pesquisar( new ComentarioSeletor() );
 	}
 	
 	private void criarFiltros(StringBuilder sql,ComentarioSeletor seletor ){
@@ -315,7 +293,7 @@ public class ComentarioRepository extends AbstractCrudRepository {
 				ps.setString(indice++, String.format("%%%s%%", seletor.getConteudo()) );
 			}
 			if(seletor.getData()  != null) {
-//				ps.setDate(indice++, seletor.getData() );
+				ps.setTimestamp(3, new Timestamp(seletor.getData().getTimeInMillis()));
 			}
 			if ( seletor.getIdUsuario() != null ) {
 				ps.setInt(indice++, seletor.getIdUsuario());

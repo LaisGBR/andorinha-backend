@@ -2,8 +2,11 @@ package repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -13,10 +16,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import model.Comentario;
 import model.Tweet;
 import model.Usuario;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
+import model.seletor.ComentarioSeletor;
+import model.seletor.TweetSeletor;
 import runner.AndorinhaTestRunner;
 import runner.DatabaseHelper;
 
@@ -39,7 +45,7 @@ public class TestTweetRepository {
 		DatabaseHelper.getInstance("andorinhaDS").execute("dataset/andorinha.xml", DatabaseOperation.CLEAN_INSERT);
 	}
 
-	@Test
+//	@Test
 	public void testa_se_tweet_foi_inserido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
 
@@ -58,7 +64,7 @@ public class TestTweetRepository {
 		assertThat(Calendar.getInstance().getTime()).isCloseTo(inserido.getData().getTime(), DELTA_MILIS);
 	}
 
-	@Test
+//	@Test
 	public void testa_se_tweet_foi_alterado() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 		tweet.setConteudo("Alterado!");
@@ -71,7 +77,7 @@ public class TestTweetRepository {
 		assertThat(Calendar.getInstance().getTime()).isCloseTo(alterado.getData().getTime(), DELTA_MILIS);
 	}
 
-	@Test
+//	@Test
 	public void testa_se_tweet_foi_removido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 		assertThat(tweet).isNotNull();
@@ -84,7 +90,7 @@ public class TestTweetRepository {
 		assertThat(this.tweetRepository.consultar(tweet.getId())).isNull();
 	}
 
-	@Test
+//	@Test
 	public void testa_consultar_tweet() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 
@@ -94,13 +100,84 @@ public class TestTweetRepository {
 		assertThat(tweet.getUsuario()).isNotNull();
 	}
 
-	@Test
+//	@Test
 	public void testa_listar_todos_tweets() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
 		List<Tweet> tweets = this.tweetRepository.listarTodos();
 
-		assertThat(tweets).isNotNull().isNotEmpty().hasSize(3).extracting("conteudo").containsExactlyInAnyOrder(
-				"Minha postagem de teste", "Minha postagem de teste 2", "Minha postagem de teste 3");
+		assertThat(tweets).isNotNull().isNotEmpty().hasSize(6).extracting("conteudo").containsExactlyInAnyOrder(
+				"Minha postagem de teste", "Minha postagem de teste 2", "Minha postagem de teste 3", "Tweet 4", "Tweet 5", "Tweet 6");
 
+		tweets.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getUsuario()).isNotNull();
+		});
+	}
+	
+//	@Test
+	public void testa_pesquisar_os_tweets_por_conteudo() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		TweetSeletor seletor = new TweetSeletor();
+		seletor.setConteudo("Minha postagem de teste 2");
+		
+		List<Tweet> tweets = this.tweetRepository.pesquisar(seletor);
+		
+		assertThat( tweets ).isNotNull()
+							.isNotEmpty()
+							.hasSize(1)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Minha postagem de teste 2");
+		
+		tweets.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getUsuario()).isNotNull();
+		});
+	}
+	
+	@Test
+	public void testa_pesquisar_os_tweets_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
+		TweetSeletor seletor = new TweetSeletor();
+		String data = "2020-01-01 12:55:15";
+		SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sdf.parse(data));
+		seletor.setData(cal);
+		
+		List<Tweet> tweets = this.tweetRepository.pesquisar(seletor);
+		
+		assertThat( tweets ).isNotNull()
+							.isNotEmpty()
+							.hasSize(4)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Minha postagem de teste 3","Tweet 4", "Tweet 5", "Tweet 6");
+		
+		tweets.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getUsuario()).isNotNull();
+		});
+	}
+	
+//	@Test
+	public void testa_contar_comentarios_por_id() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		TweetSeletor seletor = new TweetSeletor();
+		seletor.setId(1);
+		Long total = this.tweetRepository.contar(seletor);
+		
+		assertThat( total ).isNotNull()
+		.isEqualTo(1L);
+	}
+	
+//	@Test
+	public void testa_pesquisar_os_tweets_por_idUsuario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		TweetSeletor seletor = new TweetSeletor();
+		seletor.setIdUsuario(1);
+		
+		List<Tweet> tweets = this.tweetRepository.pesquisar(seletor);
+		
+		assertThat( tweets ).isNotNull()
+							.isNotEmpty()
+							.hasSize(1)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Minha postagem de teste");
+		
 		tweets.stream().forEach(t -> {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
 			assertThat(t.getUsuario()).isNotNull();
