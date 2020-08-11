@@ -45,7 +45,7 @@ public class TestTweetRepository {
 		DatabaseHelper.getInstance("andorinhaDS").execute("dataset/andorinha.xml", DatabaseOperation.CLEAN_INSERT);
 	}
 
-//	@Test
+	@Test
 	public void testa_se_tweet_foi_inserido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Usuario user = this.usuarioRepository.consultar(ID_USUARIO_CONSULTA);
 
@@ -64,7 +64,7 @@ public class TestTweetRepository {
 		assertThat(Calendar.getInstance().getTime()).isCloseTo(inserido.getData().getTime(), DELTA_MILIS);
 	}
 
-//	@Test
+	@Test
 	public void testa_se_tweet_foi_alterado() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 		tweet.setConteudo("Alterado!");
@@ -77,7 +77,7 @@ public class TestTweetRepository {
 		assertThat(Calendar.getInstance().getTime()).isCloseTo(alterado.getData().getTime(), DELTA_MILIS);
 	}
 
-//	@Test
+	@Test
 	public void testa_se_tweet_foi_removido() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 		assertThat(tweet).isNotNull();
@@ -90,7 +90,7 @@ public class TestTweetRepository {
 		assertThat(this.tweetRepository.consultar(tweet.getId())).isNull();
 	}
 
-//	@Test
+	@Test
 	public void testa_consultar_tweet() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
 		Tweet tweet = this.tweetRepository.consultar(ID_TWEET_CONSULTA);
 
@@ -100,8 +100,8 @@ public class TestTweetRepository {
 		assertThat(tweet.getUsuario()).isNotNull();
 	}
 
-//	@Test
-	public void testa_listar_todos_tweets() throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+	@Test
+	public void testa_listar_todos_tweets()  {
 		List<Tweet> tweets = this.tweetRepository.listarTodos();
 
 		assertThat(tweets).isNotNull().isNotEmpty().hasSize(6).extracting("conteudo").containsExactlyInAnyOrder(
@@ -113,8 +113,8 @@ public class TestTweetRepository {
 		});
 	}
 	
-//	@Test
-	public void testa_pesquisar_os_tweets_por_conteudo() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	@Test
+	public void testa_pesquisar_os_tweets_por_conteudo() {
 		TweetSeletor seletor = new TweetSeletor();
 		seletor.setConteudo("Minha postagem de teste 2");
 		
@@ -133,13 +133,14 @@ public class TestTweetRepository {
 	}
 	
 	@Test
-	public void testa_pesquisar_os_tweets_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
+	public void testa_pesquisar_os_tweets_por_data() throws ParseException {
 		TweetSeletor seletor = new TweetSeletor();
 		String data = "2020-01-01 12:55:15";
-		SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(sdf.parse(data));
 		seletor.setData(cal);
+		
 		
 		List<Tweet> tweets = this.tweetRepository.pesquisar(seletor);
 		
@@ -155,8 +156,8 @@ public class TestTweetRepository {
 		});
 	}
 	
-//	@Test
-	public void testa_contar_comentarios_por_id() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	@Test
+	public void testa_contar_comentarios_por_id()  {
 		TweetSeletor seletor = new TweetSeletor();
 		seletor.setId(1);
 		Long total = this.tweetRepository.contar(seletor);
@@ -165,8 +166,8 @@ public class TestTweetRepository {
 		.isEqualTo(1L);
 	}
 	
-//	@Test
-	public void testa_pesquisar_os_tweets_por_idUsuario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	@Test
+	public void testa_pesquisar_os_tweets_por_idUsuario()  {
 		TweetSeletor seletor = new TweetSeletor();
 		seletor.setIdUsuario(1);
 		

@@ -2,6 +2,8 @@ package repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -167,10 +169,14 @@ public class TestComentarioRepository {
 		});
 	}
 	
-//	@Test
-	public void testa_pesquisar_os_comentarios_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	@Test
+	public void testa_pesquisar_os_comentarios_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
 		ComentarioSeletor seletor = new ComentarioSeletor();
-//		seletor.setData("Comentário 5");
+		String data = "2020-06-01 15:45:20";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sdf.parse(data));
+		seletor.setData(cal);
 		
 		List<Comentario> comentarios = this.comentarioRepository.pesquisar(seletor);
 		
@@ -178,7 +184,7 @@ public class TestComentarioRepository {
 							.isNotEmpty()
 							.hasSize(1)
 							.extracting("conteudo")
-							.containsExactlyInAnyOrder("Comentário 5");
+							.containsExactlyInAnyOrder("Comentário 1");
 		
 		comentarios.stream().forEach(t -> {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
