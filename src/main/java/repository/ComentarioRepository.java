@@ -1,44 +1,33 @@
 package repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import model.Comentario;
-import model.Tweet;
-import model.Usuario;
-import model.exceptions.ErroAoConectarNaBaseException;
-import model.exceptions.ErroAoConsultarBaseException;
 import model.seletor.ComentarioSeletor;
 
 @Stateless
 public class ComentarioRepository extends AbstractCrudRepository {
 
-	public void inserir(Comentario comentario) throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+	public void inserir(Comentario comentario) {
 		comentario.setData(Calendar.getInstance());
 		em.persist(comentario);
 	}
 
-	public void atualizar(Comentario comentario) throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+	public void atualizar(Comentario comentario) {
 		comentario.setData(Calendar.getInstance());
 		em.merge(comentario);
 	}
 
-	public void remover(int id) throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void remover(int id){
 		Comentario comentario = consultar(id);
 		em.remove(comentario);
 	}
 
-	public Comentario consultar(int id) throws ErroAoConsultarBaseException, ErroAoConectarNaBaseException {
+	public Comentario consultar(int id)  {
 		return em.find(Comentario.class, id);
 	}
 

@@ -64,6 +64,7 @@ public class UsuarioRepository extends AbstractCrudRepository {
 			boolean primeiro = true;
 			if ( seletor.getId() != null ) {
 				jpql.append("u.id = :id ");
+				primeiro = false;
 			}
 
 			if (seletor.getNome() != null && !seletor.getNome().trim().isEmpty() ) {
