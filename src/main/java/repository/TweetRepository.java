@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import model.Tweet;
+import model.dto.TweetDTO;
 import model.seletor.TweetSeletor;
 
 @Stateless
@@ -34,11 +35,25 @@ public class TweetRepository extends AbstractCrudRepository {
 	public List<Tweet> pesquisar(TweetSeletor seletor) {
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT t FROM Tweet t  ");
-		jpql.append("JOIN t.usuario u ");
+		jpql.append("INNER JOIN FETCH t.usuario u ");
 
 		this.criarFiltros(jpql, seletor);
 
 		Query query = super.em.createQuery(jpql.toString());
+
+		this.adicionarParametros(query, seletor);
+
+		return query.getResultList();
+	}
+	
+	public List<TweetDTO> pesquisarDTO(TweetSeletor seletor) {
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("SELECT new model.dto.TweetDTO(t.id, t.conteudo, t.data, u.id) FROM Tweet t  ");
+		jpql.append("INNER JOIN t.usuario u ");
+
+		this.criarFiltros(jpql, seletor);
+
+		Query query = super.em.createQuery(jpql.toString(), TweetDTO.class);
 
 		this.adicionarParametros(query, seletor);
 

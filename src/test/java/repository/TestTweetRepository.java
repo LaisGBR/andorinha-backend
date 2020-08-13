@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -16,12 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import model.Comentario;
 import model.Tweet;
 import model.Usuario;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
-import model.seletor.ComentarioSeletor;
 import model.seletor.TweetSeletor;
 import runner.AndorinhaTestRunner;
 import runner.DatabaseHelper;

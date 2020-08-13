@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.Usuario;
-import model.seletor.ComentarioSeletor;
 import model.seletor.UsuarioSeletor;
 import repository.UsuarioRepository;
 

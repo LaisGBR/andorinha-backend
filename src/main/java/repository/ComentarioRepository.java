@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import model.Comentario;
+import model.dto.ComentarioDTO;
 import model.seletor.ComentarioSeletor;
 
 @Stateless
@@ -34,9 +35,9 @@ public class ComentarioRepository extends AbstractCrudRepository {
 	public List<Comentario> pesquisar(ComentarioSeletor seletor){
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT c FROM Comentario c ");
-		jpql.append("JOIN c.usuario ");
-		jpql.append("JOIN c.tweet t ");
-		jpql.append("JOIN t.usuario ");
+		jpql.append("INNER JOIN FETCH c.usuario ");
+		jpql.append("INNER JOIN FETCH c.tweet t ");
+		jpql.append("INNER JOIN FETCH t.usuario ");
 		
 		this.criarFiltros(jpql, seletor);
 
@@ -46,6 +47,21 @@ public class ComentarioRepository extends AbstractCrudRepository {
 		return query.getResultList();
 	}
 
+	public List<ComentarioDTO> pesquisarDTO(ComentarioSeletor seletor){
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("SELECT new model.dto.ComentarioDTO(c.id, c.conteudo, c.data, u.id,  t.id) FROM Comentario c ");
+		jpql.append("INNER JOIN c.usuario u ");
+		jpql.append("INNER JOIN c.tweet t ");
+		jpql.append("INNER JOIN t.usuario ");
+		
+		this.criarFiltros(jpql, seletor);
+
+		Query query = em.createQuery(jpql.toString(), ComentarioDTO.class);
+		this.adicionarParametros(query, seletor);
+
+		return query.getResultList();
+	}
+	
 	public Long contar(ComentarioSeletor seletor) {
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT COUNT(c) FROM Comentario c");
