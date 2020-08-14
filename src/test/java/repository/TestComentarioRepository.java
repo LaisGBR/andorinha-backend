@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import model.Comentario;
 import model.Tweet;
 import model.Usuario;
+import model.dto.ComentarioDTO;
 import model.exceptions.ErroAoConectarNaBaseException;
 import model.exceptions.ErroAoConsultarBaseException;
 import model.seletor.ComentarioSeletor;
@@ -28,7 +29,7 @@ public class TestComentarioRepository {
 
 	private static final int ID_TWEET_CONSULTA = 1;
 	private static final int ID_COMENTARIO_CONSULTA = 1;
-	private static final int ID_USUARIO_CONSULTA = 1;
+	private static final int ID_USUARIO_CONSULTA = 1; 
 	
 	private static final long DELTA_MILIS = 500;
 	
@@ -219,6 +220,94 @@ public class TestComentarioRepository {
 			assertThat(t.getUsuario()).isNotNull();
 			assertThat(t.getTweet()).isNotNull();
 			assertThat(t.getTweet().getUsuario()).isNotNull();
+		});
+	}
+	
+	@Test
+	public void testa_pesquisarDTO_os_comentarios_por_idTweet() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		ComentarioSeletor seletor = new ComentarioSeletor();
+		seletor.setIdTweet(1);
+		
+		List<ComentarioDTO> comentarios = this.comentarioRepository.pesquisarDTO(seletor);
+		
+		assertThat( comentarios ).isNotNull()
+							.isNotEmpty()
+							.hasSize(4)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Comentário 1", "Comentário 2", "Comentário 3", "Comentário 4");
+		
+		comentarios.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getIdUsuario()).isNotNull();
+			assertThat(t.getIdTweet()).isNotNull();
+			assertThat(t.getIdUsuarioTweet()).isNotNull();
+		});
+	}
+	
+	@Test
+	public void testa_pesquisarDTO_os_comentarios_por_idUsuario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		ComentarioSeletor seletor = new ComentarioSeletor();
+		seletor.setIdUsuario(1);
+		
+		List<ComentarioDTO> comentarios = this.comentarioRepository.pesquisarDTO(seletor);
+		
+		assertThat( comentarios ).isNotNull()
+							.isNotEmpty()
+							.hasSize(2)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Comentário 5", "Comentário 10");
+		
+		comentarios.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getIdUsuario()).isNotNull();
+			assertThat(t.getIdTweet()).isNotNull();
+			assertThat(t.getIdUsuarioTweet()).isNotNull();
+		});
+	}
+	
+	@Test
+	public void testa_pesquisarDTO_os_comentarios_por_conteudo() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+		ComentarioSeletor seletor = new ComentarioSeletor();
+		seletor.setConteudo("Comentário 5");
+		
+		List<ComentarioDTO> comentarios = this.comentarioRepository.pesquisarDTO(seletor);
+		
+		assertThat( comentarios ).isNotNull()
+							.isNotEmpty()
+							.hasSize(1)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Comentário 5");
+		
+		comentarios.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getIdUsuario()).isNotNull();
+			assertThat(t.getIdTweet()).isNotNull();
+			assertThat(t.getIdUsuarioTweet()).isNotNull();
+		});
+	}
+	
+	@Test
+	public void testa_pesquisarDTO_os_comentarios_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
+		ComentarioSeletor seletor = new ComentarioSeletor();
+		String data = "2020-06-01 15:45:20";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sdf.parse(data));
+		seletor.setData(cal);
+		
+		List<ComentarioDTO> comentarios = this.comentarioRepository.pesquisarDTO(seletor);
+		
+		assertThat( comentarios ).isNotNull()
+							.isNotEmpty()
+							.hasSize(1)
+							.extracting("conteudo")
+							.containsExactlyInAnyOrder("Comentário 1");
+		
+		comentarios.stream().forEach(t -> {
+			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
+			assertThat(t.getIdUsuario()).isNotNull();
+			assertThat(t.getIdTweet()).isNotNull();
+			assertThat(t.getIdUsuarioTweet()).isNotNull();
 		});
 	}
 }

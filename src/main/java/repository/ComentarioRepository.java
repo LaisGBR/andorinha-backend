@@ -49,10 +49,10 @@ public class ComentarioRepository extends AbstractCrudRepository {
 
 	public List<ComentarioDTO> pesquisarDTO(ComentarioSeletor seletor){
 		StringBuilder jpql = new StringBuilder();
-		jpql.append("SELECT new model.dto.ComentarioDTO(c.id, c.conteudo, c.data, u.id,  t.id) FROM Comentario c ");
+		jpql.append("SELECT new model.dto.ComentarioDTO(c.id, c.conteudo, c.data, u.id,  t.id, ut.id ) FROM Comentario c ");
 		jpql.append("INNER JOIN c.usuario u ");
 		jpql.append("INNER JOIN c.tweet t ");
-		jpql.append("INNER JOIN t.usuario ");
+		jpql.append("INNER JOIN t.usuario ut");
 		
 		this.criarFiltros(jpql, seletor);
 

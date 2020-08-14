@@ -9,19 +9,23 @@ public class ComentarioDTO {
 	private Calendar data;
 	private int idUsuario;
 	private int idTweet;
+	private int idUsuarioTweet;
 	
 	public ComentarioDTO() {
 		super();
 	}
 
-	public ComentarioDTO(int id, String conteudo, Calendar data, int idUsuario, int idTweet) {
+	
+	public ComentarioDTO(int id, String conteudo, Calendar data, int idUsuario, int idTweet, int idUsuarioTweet) {
 		super();
 		this.id = id;
 		this.conteudo = conteudo;
 		this.data = data;
 		this.idUsuario = idUsuario;
 		this.idTweet = idTweet;
+		this.idUsuarioTweet = idUsuarioTweet;
 	}
+
 
 	public int getId() {
 		return id;
@@ -62,5 +66,14 @@ public class ComentarioDTO {
 	public void setIdTweet(int idTweet) {
 		this.idTweet = idTweet;
 	}
-	
+
+
+	public int getIdUsuarioTweet() {
+		return idUsuarioTweet;
+	}
+
+
+	public void setIdUsuarioTweet(int idUsuarioTweet) {
+		this.idUsuarioTweet = idUsuarioTweet;
+	}
 }
