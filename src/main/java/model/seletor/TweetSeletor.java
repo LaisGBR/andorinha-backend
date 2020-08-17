@@ -2,7 +2,7 @@ package model.seletor;
 
 import java.util.Calendar;
 
-public class TweetSeletor {
+public class TweetSeletor  extends AbstractBaseSeletor{
 
 
 	private Integer id;
@@ -10,18 +10,11 @@ public class TweetSeletor {
 	private Calendar data;
 	private Integer idUsuario;
 	
-	private int limite;
-	private int pagina;
-	
 	public boolean possuiFiltro() {
 		return this.id != null || 
 			  (this.conteudo != null && !this.conteudo.trim().isEmpty() ) ||
 			  this.data != null  || this.idUsuario != null 
 				;
-	}
-	
-	public boolean possuiPaginacao() {
-		return this.pagina > 0 && this.limite > 0;
 	}
 
 	public Integer getId() {
@@ -55,23 +48,6 @@ public class TweetSeletor {
 	public void setIdUsuario(Integer idUsuario) {
 		this.idUsuario = idUsuario;
 	}
-
-	public int getLimite() {
-		return limite;
-	}
-
-	public void setLimite(int limite) {
-		this.limite = limite;
-	}
-
-	public int getPagina() {
-		return pagina;
-	}
-
-	public void setPagina(int pagina) {
-		this.pagina = pagina;
-	}
-	
 	
 
 }

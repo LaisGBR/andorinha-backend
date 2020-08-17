@@ -107,7 +107,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_pesquisar_os_comentarios_por_idTweet() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisar_os_comentarios_por_idTweet(){
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setIdTweet(1);
 		
@@ -128,7 +128,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_pesquisar_os_comentarios_por_idUsuario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisar_os_comentarios_por_idUsuario() {
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setIdUsuario(1);
 		
@@ -149,7 +149,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_pesquisar_os_comentarios_por_conteudo() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisar_os_comentarios_por_conteudo() {
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setConteudo("Comentário 5");
 		
@@ -170,7 +170,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_pesquisar_os_comentarios_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
+	public void testa_pesquisar_os_comentarios_por_data() throws ParseException {
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		String data = "2020-06-01 15:45:20";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -195,9 +195,9 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_contar_comentarios_por_idTweet() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_contar_comentarios_por_idTweet()  {
 		ComentarioSeletor seletor = new ComentarioSeletor();
-		seletor.setIdTweet(1);
+		seletor.setIdTweet(ID_TWEET_CONSULTA);
 		Long total = this.comentarioRepository.contar(seletor);
 		
 		assertThat( total ).isNotNull()
@@ -205,7 +205,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_listar_todos_os_comentarios() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_listar_todos_os_comentarios() {
 		List<Comentario> comentarios = this.comentarioRepository.listarTodos();
 		
 		assertThat( comentarios ).isNotNull()
@@ -224,7 +224,7 @@ public class TestComentarioRepository {
 	}
 	
 	@Test
-	public void testa_pesquisarDTO_os_comentarios_por_idTweet() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisarDTO_os_comentarios_por_idTweet(){
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setIdTweet(1);
 		
@@ -240,12 +240,12 @@ public class TestComentarioRepository {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
 			assertThat(t.getIdUsuario()).isNotNull();
 			assertThat(t.getIdTweet()).isNotNull();
-			assertThat(t.getIdUsuarioTweet()).isNotNull();
+			assertThat(t.getNomeUsuario()).isNotNull();
 		});
 	}
 	
 	@Test
-	public void testa_pesquisarDTO_os_comentarios_por_idUsuario() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisarDTO_os_comentarios_por_idUsuario(){
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setIdUsuario(1);
 		
@@ -261,12 +261,12 @@ public class TestComentarioRepository {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
 			assertThat(t.getIdUsuario()).isNotNull();
 			assertThat(t.getIdTweet()).isNotNull();
-			assertThat(t.getIdUsuarioTweet()).isNotNull();
+			assertThat(t.getNomeUsuario()).isNotNull();
 		});
 	}
 	
 	@Test
-	public void testa_pesquisarDTO_os_comentarios_por_conteudo() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException {
+	public void testa_pesquisarDTO_os_comentarios_por_conteudo() {
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		seletor.setConteudo("Comentário 5");
 		
@@ -282,12 +282,12 @@ public class TestComentarioRepository {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
 			assertThat(t.getIdUsuario()).isNotNull();
 			assertThat(t.getIdTweet()).isNotNull();
-			assertThat(t.getIdUsuarioTweet()).isNotNull();
+			assertThat(t.getNomeUsuario()).isNotNull();
 		});
 	}
 	
 	@Test
-	public void testa_pesquisarDTO_os_comentarios_por_data() throws ErroAoConectarNaBaseException, ErroAoConsultarBaseException, ParseException {
+	public void testa_pesquisarDTO_os_comentarios_por_data() throws ParseException {
 		ComentarioSeletor seletor = new ComentarioSeletor();
 		String data = "2020-06-01 15:45:20";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -307,7 +307,7 @@ public class TestComentarioRepository {
 			assertThat(t.getData()).isNotNull().isLessThan(Calendar.getInstance());
 			assertThat(t.getIdUsuario()).isNotNull();
 			assertThat(t.getIdTweet()).isNotNull();
-			assertThat(t.getIdUsuarioTweet()).isNotNull();
+			assertThat(t.getNomeUsuario()).isNotNull();
 		});
 	}
 }

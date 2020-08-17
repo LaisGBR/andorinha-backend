@@ -2,7 +2,7 @@ package model.seletor;
 
 import java.util.Calendar;
 
-public class ComentarioSeletor {
+public class ComentarioSeletor extends AbstractBaseSeletor{
 
 	private Integer id;
 	private String conteudo;
@@ -10,18 +10,12 @@ public class ComentarioSeletor {
 	private Integer idUsuario;
 	private Integer idTweet;
 
-	private Integer limite;
-	private Integer pagina;
 	
 	public boolean possuiFiltro() {
 		return this.id != null || 
 			  (this.conteudo != null && !this.conteudo.trim().isEmpty() ) ||
 			  this.data != null  || this.idUsuario != null || this.idTweet != null 
 				;
-	}
-	
-	public boolean possuiPaginacao() {
-		return this.pagina > 0 && this.limite > 0;
 	}
 	
 	public Integer getId() {
@@ -54,18 +48,7 @@ public class ComentarioSeletor {
 	public void setIdTweet(Integer idTweet) {
 		this.idTweet = idTweet;
 	}
-	public Integer getLimite() {
-		return limite;
-	}
-	public void setLimite(Integer limite) {
-		this.limite = limite;
-	}
-	public Integer getPagina() {
-		return pagina;
-	}
-	public void setPagina(Integer pagina) {
-		this.pagina = pagina;
-	}
+	
 	
 	
 
