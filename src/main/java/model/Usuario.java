@@ -1,5 +1,7 @@
 package model;
 
+import java.security.Principal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,9 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements Principal{
 	
 	@Id
 	@SequenceGenerator(name = "seq_usuario", sequenceName = "seq_usuario", initialValue = 1, allocationSize = 1)
@@ -20,6 +24,12 @@ public class Usuario {
 	
 	@Column(name = "nome")
 	private String nome;
+	
+	@Column(name = "login")
+	private String login;
+
+	@Column(name = "senha")
+	private String senha;
 	
 	public int getId() {
 		return id;
@@ -34,6 +44,27 @@ public class Usuario {
 		this.nome = nome;
 	}
 	
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getName() {
+		return this.login;
+	}
 	
 
 }

@@ -8,18 +8,22 @@ public class TweetDTO {
 	private String conteudo;
 	private Calendar data;
 	private int idUsuario;
+	private String nomeUsuario;
 	
 	public TweetDTO() {
 		super();
 	}
 
-	public TweetDTO(int id, String conteudo, Calendar data, int idUsuario) {
+	public TweetDTO(int id, String conteudo, Calendar data, int idUsuario, String nomeUsuario) {
 		super();
 		this.id = id;
 		this.conteudo = conteudo;
 		this.data = data;
 		this.idUsuario = idUsuario;
+		this.nomeUsuario = nomeUsuario;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -51,6 +55,14 @@ public class TweetDTO {
 
 	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
+	}
+
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+
+	public void setNomeUsuario(String nomeUsuario) {
+		this.nomeUsuario = nomeUsuario;
 	}
 	
 }
