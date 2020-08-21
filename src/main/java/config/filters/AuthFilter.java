@@ -39,7 +39,7 @@ public class AuthFilter implements Filter {
 
 			Usuario user = null;
 			String jwtHeader = req.getHeader(AUTH_HEADER);
-
+			
 			if (jwtHeader != null) {
 				if (jwtHeader.startsWith(AUTH_HEADER_PREFIX)) {
 					jwtHeader = jwtHeader.replace(AUTH_HEADER_PREFIX, "");
