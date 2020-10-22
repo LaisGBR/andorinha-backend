@@ -29,10 +29,10 @@ public class UsuarioService {
 	public List<Usuario> listarTodos(){
 		return this.usuarioRepository.listarTodos();
 	}
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)    
 	public int inserir(Usuario usuario) {
 		this.usuarioRepository.inserir(usuario);
 		return usuario.getId();

@@ -49,6 +49,7 @@ public class TweetService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public void atualizar(Tweet tweet) {
+		tweet.setUsuario( (Usuario)this.context.getUserPrincipal() );
 		this.tweetRepository.atualizar(tweet);
 	}
 	
